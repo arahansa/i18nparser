@@ -39,7 +39,6 @@ public class MessageFilterService {
 				if(thisHasFilterString(k)){
 					log.debug(" maybe more than one : Key : ( {} ), value : ( {} ) ", k, v);
 					AlertClass alertClass = context.getBean(AlertClass.class);
-
 					alertClass.setJtaMessage(k, true);
 					alertClass.setJtaMessage(v, false);
 					alertClass.run();
@@ -52,7 +51,6 @@ public class MessageFilterService {
 					log.debug(" good key value :: {} , {}", k, v);
 					temp.put(k, v);
 				}
-			// System.out.println("Key : " + k + " Value : " + v);
 		});
 		log.debug(" 완전한 키밸류 \n {}", temp);
 	}
