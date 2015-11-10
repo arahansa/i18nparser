@@ -12,26 +12,22 @@ public class ThreadWaitTest extends JFrame implements  Runnable{
     JButton jButton = new JButton("notify!");
 
     public ThreadWaitTest(){
-        jlabel.setSize(300, 300);
-        jlabel.setBounds(300, 300, 300, 300);
+        jlabel.setFont(new Font("돋움", Font.PLAIN, 50));
         add(jlabel, BorderLayout.CENTER);
         add(jButton, BorderLayout.SOUTH);
         jButton.addActionListener(e->restart());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
-        setBounds(200, 200, 1200, 800);
+        setBounds(200, 200, 600, 400);
         setTitle("I18nParser");
     }
-
     public static void main(String[] args) {
         new ThreadWaitTest().run();
     }
-
     @Override
     public void run() {
         timeLabel();
     }
-
     public synchronized  void restart(){
         notify();
     }
@@ -39,9 +35,7 @@ public class ThreadWaitTest extends JFrame implements  Runnable{
         for(int i=0;i<10;i++){
             jlabel.setText(i+"");
             try {
-                if(i==5){
-                    wait();
-                }
+                if(i==5){ wait(); }
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();

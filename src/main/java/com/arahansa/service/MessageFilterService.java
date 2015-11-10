@@ -54,6 +54,7 @@ public class MessageFilterService {
 		});
 		log.debug(" 완전한 키밸류 \n {}", temp);
 	}
+
 	public synchronized void restart(){
 		log.debug("restart !! ");
 		notify();
