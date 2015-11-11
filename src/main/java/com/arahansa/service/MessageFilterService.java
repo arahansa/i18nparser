@@ -26,7 +26,7 @@ public class MessageFilterService {
 	ApplicationContext context;
 	@Autowired AlertClass alertClass;
 	private boolean isWorking =true;
-
+	
 	int num=0;
 	List<OneRowI18n> oneRowI18nList;
 	List<OneRowI18n> temp = new ArrayList<>();
@@ -51,6 +51,7 @@ public class MessageFilterService {
 			}
 		}
 		log.debug(" 완전한 키밸류 \n {}", temp);
+
 	}
 
 
