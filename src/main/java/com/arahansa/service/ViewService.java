@@ -2,6 +2,7 @@ package com.arahansa.service;
 
 import javax.annotation.PostConstruct;
 
+import com.arahansa.view.frame.MainFrame;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -18,6 +19,8 @@ public class ViewService {
 	public static final String SENTENCE_DELIMETER = "sentence.delimeter";
 
 	@Autowired NorthPanel northPanel;
+	@Autowired
+	MainFrame mainFrame;
 	@Autowired Environment env;
 
 	private String sentence_delimeter;
@@ -45,7 +48,23 @@ public class ViewService {
 	public String getSentenceEnd(){
 		return sentence_end;
 	}
-	
+
+
+	public void initTextArea(){
+		mainFrame.initTextarea();
+	}
+	public void appendTextArea(String msg){
+		mainFrame.appendTextArea(msg);
+	}
+	public void setCaretPos(int pos){
+		mainFrame.setCaratArea(pos);
+	}
+
+	public String getTextAreaString(){
+		return mainFrame.getTextAreaString();
+	}
+
+
 	
 
 
