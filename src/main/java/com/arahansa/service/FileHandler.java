@@ -1,10 +1,7 @@
 package com.arahansa.service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.arahansa.domain.MessageHolder;
 import com.arahansa.domain.OneRowI18n;
@@ -68,12 +65,32 @@ public class FileHandler {
 		}
 	}
 	// TODO : 읽기 파일별 전략? 설정 ?
-	public void openPropertiesFileToMessageHolder(String fileName) {
-		log.debug("들어온 파일명 :: {} ", fileName);
+	public void openPropertiesFileToMessageHolder(String fileName) throws FileNotFoundException {
 		List<OneRowI18n> oneRowI18nList = new ArrayList<>();
-		// 자바 7 방식의 Autoclosable
-		String data;
-		try(BufferedReader in = new BufferedReader(new FileReader(fileName))) {
+		Properties props = new Properties();
+		InputStream is = new FileInputStream(fileName);
+		try {
+			props.load(new BufferedReader(new InputStreamReader(is, "UTF-8")));
+		} catch (IOException e) {
+			e.printStackTrace();
+			messageService.showMessage("properties 파일 인코딩에러");
+		}
+		props.forEach((key,value)->{
+			log.debug("Key :: {} , Value :: {} ", key, value);
+			oneRowI18nList.add(new OneRowI18n(((String)key).trim(), ((String)value).trim()));
+		});
+		log.debug("들어온 파일명 :: {} ", fileName);
+		messageHolder.setOneRowI18nList(oneRowI18nList);
+		messageService.showMessage("읽기가 완료되었습니다" );
+		try {
+			is.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// 자바 7 방식의 Autoclosable 공부할것.
+		/*try(BufferedReader in = new BufferedReader(new FileReader(fileName))) {
+			String data;
 			while((data=in.readLine())!=null){
 				String key = data.substring(0, data.indexOf("="));
 				String value = data.substring(data.indexOf("=") + 1);
@@ -85,7 +102,7 @@ public class FileHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 			messageService.showMessage("입출력 에러입니다 :: "+e.getMessage());
-		}
+		}*/
 	}
 
 	public void openFileFillJTextArea(String fileName) {

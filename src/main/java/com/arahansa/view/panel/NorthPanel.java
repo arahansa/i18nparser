@@ -11,13 +11,9 @@ import com.arahansa.service.FileHandler;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
@@ -83,7 +79,11 @@ public class NorthPanel extends JPanel implements ActionListener {
 			if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				// showSaveDialog 저장 창을 열고 확인 버튼을 눌렀는지 확인
 				jlb_properties.setText("읽기 경로 : " + jfc.getSelectedFile().toString() );
-				fileHandler.openPropertiesFileToMessageHolder(jfc.getSelectedFile().toString());
+				try {
+					fileHandler.openPropertiesFileToMessageHolder(jfc.getSelectedFile().toString());
+				} catch (FileNotFoundException e1) {
+					JOptionPane.showMessageDialog(this, "파일을 찾을 수 없다네요");
+				}
 			}
 		});
 		jbt_jsp.addActionListener(e->{
