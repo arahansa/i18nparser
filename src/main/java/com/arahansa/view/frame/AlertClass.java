@@ -12,10 +12,9 @@ import java.awt.*;
 /**
  * Created by arahansa on 2015-11-10.
  */
-@Component
-@Scope("prototype")
 @Slf4j
-public class AlertClass extends JFrame implements  Runnable{
+@Component
+public class AlertClass extends JFrame{
 
     @Autowired
     MessageFilterService messageFilterService;
@@ -29,7 +28,7 @@ public class AlertClass extends JFrame implements  Runnable{
 	public AlertClass() {
 		
     }
-    public void init(){
+    public  void init(){
         log.debug("setLayout");
         jPanel.setLayout(new GridLayout(2, 1));
         jta1.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -39,16 +38,19 @@ public class AlertClass extends JFrame implements  Runnable{
         log.debug("add !! ");
         add(jPanel, BorderLayout.CENTER);
         add(jButton, BorderLayout.SOUTH);
-        jButton.addActionListener(e -> {
-            messageFilterService.restart();
-            dispose();
-        });
-
+        jButton.addActionListener(e -> again());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
         setBounds(200, 200, 800, 600);
         setTitle("AlertClass");
         log.debug("set Title ");
+
+
+    }
+
+    private synchronized void again() {
+        notify();
+        dispose();
     }
 
     public static void main(String[] args) {
@@ -58,15 +60,11 @@ public class AlertClass extends JFrame implements  Runnable{
     public void setJtaMessage(String msg, boolean isUp){
         log.debug("set jta message ");
         if(isUp){
-            jta1.setText(msg);
+            jta1.append(msg);
         }else{
-            jta2.setText(msg);
+            jta2.append(msg);
         }
     }
 
-    @Override
-    public void run() {
-        log.debug("init");
-        init();
-    }
+
 }

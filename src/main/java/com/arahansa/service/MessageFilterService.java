@@ -1,10 +1,9 @@
 package com.arahansa.service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+import com.arahansa.domain.OneRowI18n;
 import com.arahansa.view.frame.AlertClass;
 import javafx.scene.control.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,46 +24,40 @@ public class MessageFilterService {
 
 	@Autowired
 	ApplicationContext context;
+	@Autowired AlertClass alertClass;
 	private boolean isWorking =true;
-	
-	public void setTempMap(Map<String, String> targetMap) {
-		messageHolder.setTempMap(targetMap);
+
+	int num=0;
+	List<OneRowI18n> oneRowI18nList;
+	List<OneRowI18n> temp = new ArrayList<>();
+
+	public void showTempMap() {
+		oneRowI18nList = messageHolder.getOneRowI18nList();
+		log.debug("tempOneRowList:: {}", oneRowI18nList);
+		checkThoroughList();
 	}
 
-	public synchronized void showTempMap() {
-		Map<String, String> tempMap = messageHolder.getTempMap();
-		Map<String, String> temp = new HashMap<>();
-		log.debug("tempMap :: {}", tempMap);
-		tempMap.forEach((k,v)->{
-				if(thisHasFilterString(k)){
-					log.debug(" maybe more than one : Key : ( {} ), value : ( {} ) ", k, v);
-					AlertClass alertClass = context.getBean(AlertClass.class);
-
-					alertClass.setJtaMessage(k, true);
-					alertClass.setJtaMessage(v, false);
-					alertClass.run();
-					try {
-						wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}else{
-					log.debug(" good key value :: {} , {}", k, v);
-					temp.put(k, v);
-				}
-			// System.out.println("Key : " + k + " Value : " + v);
-		});
+	private void checkThoroughList(){
+		for(;num<=oneRowI18nList.size();num++){
+			OneRowI18n oneRowI18n = oneRowI18nList.get(num);
+			if(thisHasFilterString(oneRowI18n)){
+				alertClass.setJtaMessage(oneRowI18n.getKor(), true);
+				alertClass.setJtaMessage(oneRowI18n.getEng(), false);
+				alertClass.init();
+				break;
+			}else{
+				log.debug(" good key-value :: {} ", oneRowI18n);
+				temp.add(oneRowI18n);
+			}
+		}
 		log.debug(" 완전한 키밸류 \n {}", temp);
 	}
-	public synchronized void restart(){
-		log.debug("restart !! ");
-		notify();
-	}
 
-	private boolean thisHasFilterString(String targetString){
+
+	private boolean thisHasFilterString(OneRowI18n oneRowI18n){
 		boolean flag=false;
 		for(String s : filterStrings){
-			if(targetString.contains(s)){
+			if(oneRowI18n.getKor().contains(s)){
 				flag=true;
 				break;
 			}
