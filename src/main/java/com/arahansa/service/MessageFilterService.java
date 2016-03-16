@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 import com.arahansa.domain.OneRowI18n;
 import com.arahansa.view.frame.AlertClass;
 import javafx.scene.control.Alert;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -22,8 +24,9 @@ public class MessageFilterService {
 	List<String> filterStrings = Arrays.asList(",", "\n", "|", "/");
 	@Autowired MessageService messageService;
 	@Autowired ViewService viewService;
-
 	@Autowired AlertClass alertClass;
+	Set<String> duplicateResult = new HashSet<>(); 
+	
 	private boolean isWorking =true;
 
 	int num=0;
@@ -67,6 +70,52 @@ public class MessageFilterService {
 	// TEXT AREA 검색
 	public void checkTextAreaWithi18nList() {
 
+	}
+	
+	public void checkNoneExistKeys(){
+		Map<String, String> checkDuplicateMap1 = messageHolder.getCheckDuplicateMap1();
+		Map<String, String>  checkDuplicateMap2 = messageHolder.getCheckDuplicateMap2();
+		viewService.appendTextArea("==============\n");
+		checkDuplicateMap1.forEach((k,v)->{
+			log.debug("Check Key : {} " , k);
+			String isContainString = checkDuplicateMap2.get(k);
+			if(isContainString==null){
+				log.debug("found This Key in Only first file :: {} ", k);
+				
+				viewService.appendTextArea("Key : "+k+" : "+v+"\n");
+			}
+		});
+	}
+	
+	
+	public void checkExistKeys(){
+		Map<String, String> checkDuplicateMap1 = messageHolder.getCheckDuplicateMap1();
+		Map<String, String>  checkDuplicateMap2 = messageHolder.getCheckDuplicateMap2();
+		viewService.appendTextArea("==============\n");
+		checkDuplicateMap1.forEach((k,v)->{
+			log.debug("Check Key : {} " , k);
+			String isContainString = checkDuplicateMap2.get(k);
+			if(isContainString!=null){
+				log.debug("found This Key in Only first file :: {} ", k);
+				
+				viewService.appendTextArea("Key : "+k+" : "+v+"\n");
+			}
+		});
+	}
+	
+	public void initHolder() {
+		viewService.setTextareaInit();
+		messageHolder.init();
+		
+	}
+	public void checkNoneExistValue() {
+		Map<String, String> checkDuplicateMap1 = messageHolder.getCheckDuplicateMap1();
+		viewService.appendTextArea("==============\n");
+		checkDuplicateMap1.forEach((k,v)->{
+			if(StringUtils.isEmpty(v)){
+				viewService.appendTextArea("Key : "+k+" : "+v+"\n");
+			}
+		});
 	}
 
 

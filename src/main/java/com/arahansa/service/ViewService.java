@@ -1,7 +1,10 @@
 package com.arahansa.service;
 
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 
+import com.arahansa.domain.MessageHolder;
 import com.arahansa.view.frame.MainFrame;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,7 @@ public class ViewService {
 	@Autowired
 	MainFrame mainFrame;
 	@Autowired Environment env;
+	@Autowired MessageHolder messageHolder;
 
 	private String sentence_delimeter;
 	private String sentence_begin;
@@ -62,6 +66,15 @@ public class ViewService {
 
 	public String getTextAreaString(){
 		return mainFrame.getTextAreaString();
+	}
+
+	public void showDuplicateKeys() {
+		Set<String> duplicateKeyName = messageHolder.getDuplicateKeyName();
+		appendTextArea(duplicateKeyName.toString());
+	}
+	
+	public void setTextareaInit(){
+		mainFrame.setTextareaInit();
 	}
 
 

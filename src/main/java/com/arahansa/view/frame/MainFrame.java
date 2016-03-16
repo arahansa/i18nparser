@@ -125,4 +125,9 @@ public class MainFrame extends JFrame {
 	public String getTextAreaString() {
 		return textArea.getText();
 	}
+
+	public void setTextareaInit() {
+		textArea.setText("");
+		
+	}
 }

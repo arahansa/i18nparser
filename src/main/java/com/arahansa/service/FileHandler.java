@@ -6,6 +6,8 @@ import java.util.*;
 import com.arahansa.domain.MessageHolder;
 import com.arahansa.domain.OneRowI18n;
 import lombok.Data;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,9 @@ public class FileHandler {
 	// stringBuilder 는 쓰레드안전하지않다. 성능상이점. 이것은 멀티쓰레드 프로그램이 아니다.
 	StringBuilder keyBuffer = new StringBuilder();
 	StringBuilder valueBuffer = new StringBuilder();
+	
+	Set<String> checkDuplicateKeys = new HashSet<>();
+	Set<String> duplicateKeyName = new HashSet<>();
 
 	private static final int START=0;
 	private static final int AFTER_DELIMETER=1;
@@ -103,6 +108,85 @@ public class FileHandler {
 			e.printStackTrace();
 			messageService.showMessage("입출력 에러입니다 :: "+e.getMessage());
 		}*/
+	}
+	
+	// 한 줄 씩 파일을 읽는 소스
+	public void openPropertiesFileToMessageHolderByOneLine(String fileName){
+		List<OneRowI18n> oneRowI18nList = new ArrayList<>();
+		Map<String, String> checkDuplicateMap1 = new HashMap<>();
+		try(BufferedReader in = new BufferedReader(new FileReader(fileName))) {
+			String data;
+			while((data=in.readLine())!=null){
+				log.debug("value :: {}\" ", data);
+				log.debug("value :: {}\" ", data.getBytes().length);
+				if(!StringUtils.startsWithAny(data, "=", ">", "<", "#", " ", System.getProperty("line.separator")) && data.getBytes().length !=0 ){
+					String key = data.substring(0, data.indexOf("="));
+					String value = data.substring(data.indexOf("=") + 1);
+					log.debug("Key :: {} , Value :: {} ", key, value);
+					oneRowI18nList.add(new OneRowI18n(((String)key).trim(), ((String)value).trim()));
+					
+					// 중복체크 set으로
+					int size = checkDuplicateKeys.size();
+					String trimKey = ((String)key).trim();
+					String trimValue = ((String)value).trim();
+					checkDuplicateKeys.add(trimKey);
+					checkDuplicateMap1.put(trimKey, trimValue);
+					
+					if(size == checkDuplicateKeys.size()){
+						log.debug("중복 발생 {} ", ((String)key).trim());
+						duplicateKeyName.add(((String)key).trim());
+					}
+				}
+			}
+			messageHolder.setOneRowI18nList(oneRowI18nList);
+			messageHolder.setCheckDuplicateKeys(checkDuplicateKeys);
+			messageHolder.setCheckDuplicateMap1(checkDuplicateMap1);
+			messageHolder.setDuplicateKeyName(duplicateKeyName);
+			messageService.showMessage("읽기가 완료되었습니다" );
+		} catch (IOException e) {
+			e.printStackTrace();
+			messageService.showMessage("입출력 에러입니다 :: "+e.getMessage());
+		}
+	}
+	
+	// 한 줄 씩 파일을 읽는 소스2
+	public void openPropertiesFileToMessageHolderByOneLine4SecondFile(String fileName){
+		List<OneRowI18n> oneRowI18nList = new ArrayList<>();
+		Set<String> checkDuplicateKeys2 = new HashSet<>();
+		Map<String, String> checkDuplicateMap2 = new HashMap<>();
+		try(BufferedReader in = new BufferedReader(new FileReader(fileName))) {
+			String data;
+			while((data=in.readLine())!=null){
+				log.debug("value :: {}\" ", data);
+				log.debug("value :: {}\" ", data.getBytes().length);
+				if(!StringUtils.startsWithAny(data, "=", ">", "<", "#", " ", System.getProperty("line.separator")) && data.getBytes().length !=0 ){
+					String key = data.substring(0, data.indexOf("="));
+					String value = data.substring(data.indexOf("=") + 1);
+					log.debug("Key :: {} , Value :: {} ", key, value);
+					oneRowI18nList.add(new OneRowI18n(((String)key).trim(), ((String)value).trim()));
+					
+					// 중복체크 set으로
+					int size = checkDuplicateKeys2.size();
+					String trimKey = ((String)key).trim();
+					String trimValue = ((String)value).trim();
+					checkDuplicateKeys.add(trimKey);
+					checkDuplicateMap2.put(trimKey, trimValue);
+					if(size == checkDuplicateKeys2.size()){
+						log.debug("중복 발생 {} ", ((String)key).trim());
+						duplicateKeyName.add(((String)key).trim());
+					}
+				}
+			}
+			// messageHolder.setOneRowI18nList(oneRowI18nList);
+			// 여기가 중요 여기서는 두번째 키로 저장을 한다 
+			messageHolder.setCheckDuplicateKeys2(checkDuplicateKeys2);
+			// messageHolder.setDuplicateKeyName(duplicateKeyName);
+			messageHolder.setCheckDuplicateMap2(checkDuplicateMap2);
+			messageService.showMessage("읽기가 완료되었습니다" );
+		} catch (IOException e) {
+			e.printStackTrace();
+			messageService.showMessage("입출력 에러입니다 :: "+e.getMessage());
+		}
 	}
 
 	public void openFileFillJTextArea(String fileName) {

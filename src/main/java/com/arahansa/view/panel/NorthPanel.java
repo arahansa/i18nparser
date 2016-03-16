@@ -31,7 +31,7 @@ public class NorthPanel extends JPanel implements ActionListener {
 	JPanel secondPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 	//-----first Panel
-	final private JFileChooser jfc = new JFileChooser();
+	final private JFileChooser jfc = new JFileChooser("C:\\Users\\arahansa\\IdeaProjects\\Winvension\\src\\main\\resources\\egovframework\\message\\com");
 	final private JFileChooser jfc_jsp = new JFileChooser();
 	private JButton jbt_open = new JButton("열기");
 	private JButton jbt_save = new JButton("저장");
@@ -41,6 +41,8 @@ public class NorthPanel extends JPanel implements ActionListener {
 
 	//--- secondPanel
 	private JButton jbt_properties= new JButton("[1] properties읽기");
+	private JButton jbt_properties2= new JButton("[1.5] properties읽기(한줄씩읽기)");
+	private JButton jbt_properties3= new JButton("[1.6] 두번째 파일 읽기");
 	private JLabel jlb_properties = new JLabel(" ");
 	private JButton jbt_jsp= new JButton("[2]jsp읽기");
 	private JButton jbt_save_jsp = new JButton("[4]jsp저장");
@@ -63,6 +65,8 @@ public class NorthPanel extends JPanel implements ActionListener {
 
 		secondPanel.add(jbt_properties);
 		secondPanel.add(jlb_properties);
+		secondPanel.add(jbt_properties2);
+		secondPanel.add(jbt_properties3);
 		secondPanel.add(jbt_jsp);
 		secondPanel.add(jbt_save_jsp);
 		secondPanel.add(jlb_jsp);
@@ -84,6 +88,20 @@ public class NorthPanel extends JPanel implements ActionListener {
 				} catch (FileNotFoundException e1) {
 					JOptionPane.showMessageDialog(this, "파일을 찾을 수 없다네요");
 				}
+			}
+		});
+		jbt_properties2.addActionListener(e->{
+			if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+				// showSaveDialog 저장 창을 열고 확인 버튼을 눌렀는지 확인
+				// jlb_properties.setText("읽기 경로 : " + jfc.getSelectedFile().toString() );
+				fileHandler.openPropertiesFileToMessageHolderByOneLine(jfc.getSelectedFile().toString());
+			}
+		});
+		jbt_properties3.addActionListener(e->{
+			if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+				// showSaveDialog 저장 창을 열고 확인 버튼을 눌렀는지 확인
+				// jlb_properties.setText("읽기 경로 : " + jfc.getSelectedFile().toString() );
+				fileHandler.openPropertiesFileToMessageHolderByOneLine4SecondFile(jfc.getSelectedFile().toString());
 			}
 		});
 		jbt_jsp.addActionListener(e->{
